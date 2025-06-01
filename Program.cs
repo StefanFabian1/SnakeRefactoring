@@ -19,9 +19,8 @@ namespace Snake
             int gameover = 0;
             var gameBoard = new GameBoard();
             var snake = new Game.Snake(gameBoard.Width / 2, gameBoard.Height / 2);
+            var food = new Food(gameBoard.Width, gameBoard.Height);
             string movement = "RIGHT";
-            int berryx = randomnummer.Next(0, gameBoard.Width);
-            int berryy = randomnummer.Next(0, gameBoard.Height);
             DateTime tijd = DateTime.Now;
             DateTime tijd2 = DateTime.Now;
             string buttonpressed = "no";
@@ -34,11 +33,10 @@ namespace Snake
                 }
                 gameBoard.DrawBorders();
                 Console.ForegroundColor = ConsoleColor.Green;
-                if (berryx == snake.Head.X && berryy == snake.Head.Y)
+                if (food.Position.X == snake.Head.X && food.Position.Y == snake.Head.Y)
                 {
                     score++;
-                    berryx = randomnummer.Next(1, gameBoard.Width-2);
-                    berryy = randomnummer.Next(1, gameBoard.Height-2);
+                    food.GenerateNewPosition(gameBoard.Width, gameBoard.Height);
                 } 
                 foreach (var pos in snake.Body)
                 {
@@ -52,7 +50,7 @@ namespace Snake
                 Console.SetCursorPosition(snake.Head.X, snake.Head.Y);
                 Console.ForegroundColor = snake.Color;
                 Console.Write("■");
-                Console.SetCursorPosition(berryx, berryy);
+                Console.SetCursorPosition(food.Position.X, food.Position.Y);
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("■");
                 tijd = DateTime.Now;
