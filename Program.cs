@@ -17,13 +17,9 @@ namespace Snake
             Random randomnummer = new Random();
             int score = 5;
             int gameover = 0;
-            // TODO: Inicializácia GameBoard
             var gameBoard = new GameBoard();
-            Position hoofd = new Position(gameBoard.Width/2, gameBoard.Height/2);
-            ConsoleColor hoofdColor = ConsoleColor.Red;
+            var snake = new Game.Snake(gameBoard.Width / 2, gameBoard.Height / 2);
             string movement = "RIGHT";
-            List<int> xposlijf = new List<int>();
-            List<int> yposlijf = new List<int>();
             int berryx = randomnummer.Next(0, gameBoard.Width);
             int berryy = randomnummer.Next(0, gameBoard.Height);
             DateTime tijd = DateTime.Now;
@@ -32,34 +28,29 @@ namespace Snake
             while (true)
             {
                 Console.Clear();
-                if (hoofd.X == gameBoard.Width-1 || hoofd.X == 0 || hoofd.Y == gameBoard.Height-1 || hoofd.Y == 0)
+                if (snake.CheckCollision(gameBoard.Width, gameBoard.Height) || snake.CheckSelfCollision())
                 { 
                     gameover = 1;
                 }
-                // TODO: Vykreslenie hraníc cez GameBoard
                 gameBoard.DrawBorders();
                 Console.ForegroundColor = ConsoleColor.Green;
-                if (berryx == hoofd.X && berryy == hoofd.Y)
+                if (berryx == snake.Head.X && berryy == snake.Head.Y)
                 {
                     score++;
                     berryx = randomnummer.Next(1, gameBoard.Width-2);
                     berryy = randomnummer.Next(1, gameBoard.Height-2);
                 } 
-                for (int i = 0; i < xposlijf.Count(); i++)
+                foreach (var pos in snake.Body)
                 {
-                    Console.SetCursorPosition(xposlijf[i], yposlijf[i]);
+                    Console.SetCursorPosition(pos.X, pos.Y);
                     Console.Write("■");
-                    if (xposlijf[i] == hoofd.X && yposlijf[i] == hoofd.Y)
-                    {
-                        gameover = 1;
-                    }
                 }
                 if (gameover == 1)
                 {
                     break;
                 }
-                Console.SetCursorPosition(hoofd.X, hoofd.Y);
-                Console.ForegroundColor = hoofdColor;
+                Console.SetCursorPosition(snake.Head.X, snake.Head.Y);
+                Console.ForegroundColor = snake.Color;
                 Console.Write("■");
                 Console.SetCursorPosition(berryx, berryy);
                 Console.ForegroundColor = ConsoleColor.Cyan;
@@ -95,27 +86,24 @@ namespace Snake
                         }
                     }
                 }
-                xposlijf.Add(hoofd.X);
-                yposlijf.Add(hoofd.Y);
                 switch (movement)
                 {
                     case "UP":
-                        hoofd.Y--;
+                        snake.Move(Direction.Up);
                         break;
                     case "DOWN":
-                        hoofd.Y++;
+                        snake.Move(Direction.Down);
                         break;
                     case "LEFT":
-                        hoofd.X--;
+                        snake.Move(Direction.Left);
                         break;
                     case "RIGHT":
-                        hoofd.X++;
+                        snake.Move(Direction.Right);
                         break;
                 }
-                if (xposlijf.Count() > score)
+                if (snake.Body.Count > score)
                 {
-                    xposlijf.RemoveAt(0);
-                    yposlijf.RemoveAt(0);
+                    snake.Body.RemoveAt(0);
                 }
             }
             Console.SetCursorPosition(gameBoard.Width / 5, gameBoard.Height / 2);
