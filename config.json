@@ -1,0 +1,19 @@
+{
+    "GameBoard": {
+        "Width": 32,
+        "Height": 16,
+        "BorderCharacter": "■"
+    },
+    "GameSpeed": {
+        "FrameDelay": 500
+    },
+    "Snake": {
+        "InitialScore": 5,
+        "Color": "Red",
+        "RenderCharacter": "■"
+    },
+    "Food": {
+        "Color": "Cyan",
+        "RenderCharacter": "■"
+    }
+} 

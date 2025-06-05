@@ -7,12 +7,13 @@ namespace Snake.Game
     {
         public int Width { get; private set; }
         public int Height { get; private set; }
-        private const char BORDER_CHAR = '■';
+        private char BORDER_CHAR;
 
-        public GameBoard(int width = 32, int height = 16)
+        public GameBoard(int width, int height, char borderChar)
         {
             Width = width;
             Height = height;
+            BORDER_CHAR = borderChar;
             InitializeConsole();
         }
 

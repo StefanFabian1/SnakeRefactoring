@@ -14,9 +14,10 @@ namespace Snake.Game
         private readonly InputHandler _inputHandler;
         private Direction _currentDirection;
         private int _score;
-        private const int FrameDelay = 500; // ms
+        private readonly int _frameDelay;
+        private readonly GameConfig _config;
 
-        public GameLoop(GameBoard gameBoard, Snake snake, Food food, GameRenderer renderer, InputHandler inputHandler)
+        public GameLoop(GameBoard gameBoard, Snake snake, Food food, GameRenderer renderer, InputHandler inputHandler, GameConfig config)
         {
             _gameBoard = gameBoard;
             _snake = snake;
@@ -24,7 +25,9 @@ namespace Snake.Game
             _renderer = renderer;
             _inputHandler = inputHandler;
             _currentDirection = Direction.Right;
-            _score = 5;
+            _score = config.Snake.InitialScore;
+            _frameDelay = config.GameSpeed.FrameDelay;
+            _config = config;
         }
 
         public void Run()
@@ -46,8 +49,8 @@ namespace Snake.Game
                     _food.GenerateNewPosition(_gameBoard.Width, _gameBoard.Height);
                 }
 
-                _renderer.RenderSnake(_snake);
-                _renderer.RenderFood(_food);
+                _renderer.RenderSnake(_snake, _config.Snake.RenderCharacter);
+                _renderer.RenderFood(_food, _config.Food.RenderCharacter);
 
                 _currentDirection = _inputHandler.GetDirection(_currentDirection);
                 _snake.Move(_currentDirection);
@@ -57,7 +60,7 @@ namespace Snake.Game
                     _snake.Body.RemoveAt(0);
                 }
 
-                Thread.Sleep(FrameDelay);
+                Thread.Sleep(_frameDelay);
             }
 
             _renderer.RenderScore(_score, _gameBoard.Width, _gameBoard.Height);
