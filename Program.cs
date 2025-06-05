@@ -20,6 +20,7 @@ namespace Snake
             var gameBoard = new GameBoard();
             var snake = new Game.Snake(gameBoard.Width / 2, gameBoard.Height / 2);
             var food = new Food(gameBoard.Width, gameBoard.Height);
+            var renderer = new GameRenderer();
             string movement = "RIGHT";
             DateTime tijd = DateTime.Now;
             DateTime tijd2 = DateTime.Now;
@@ -32,27 +33,17 @@ namespace Snake
                     gameover = 1;
                 }
                 gameBoard.DrawBorders();
-                Console.ForegroundColor = ConsoleColor.Green;
                 if (food.Position.X == snake.Head.X && food.Position.Y == snake.Head.Y)
                 {
                     score++;
                     food.GenerateNewPosition(gameBoard.Width, gameBoard.Height);
                 } 
-                foreach (var pos in snake.Body)
-                {
-                    Console.SetCursorPosition(pos.X, pos.Y);
-                    Console.Write("■");
-                }
+                renderer.RenderSnake(snake);
                 if (gameover == 1)
                 {
                     break;
                 }
-                Console.SetCursorPosition(snake.Head.X, snake.Head.Y);
-                Console.ForegroundColor = snake.Color;
-                Console.Write("■");
-                Console.SetCursorPosition(food.Position.X, food.Position.Y);
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Write("■");
+                renderer.RenderFood(food);
                 tijd = DateTime.Now;
                 buttonpressed = "no";
                 while (true)
@@ -104,9 +95,7 @@ namespace Snake
                     snake.Body.RemoveAt(0);
                 }
             }
-            Console.SetCursorPosition(gameBoard.Width / 5, gameBoard.Height / 2);
-            Console.WriteLine("Game over, Score: "+ score);
-            Console.SetCursorPosition(gameBoard.Width / 5, gameBoard.Height / 2 +1);
+            renderer.RenderScore(score, gameBoard.Width, gameBoard.Height);
         }
     }
 }
