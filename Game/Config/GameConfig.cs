@@ -1,31 +1,43 @@
 using System;
 using System.IO;
 using System.Text.Json;
+using Snake.Game.Core.Interfaces;
+using Snake.Game.Core.Impl;
 
 namespace Snake.Game
 {
     public class GameConfig
     {
-        public GameBoardConfig GameBoard { get; set; }
-        public GameSpeedConfig GameSpeed { get; set; }
-        public SnakeConfig Snake { get; set; }
-        public FoodConfig Food { get; set; }
+        public GameBoardConfig GameBoard { get; set; } = new();
+        public GameSpeedConfig GameSpeed { get; set; } = new();
+        public SnakeConfig Snake { get; set; } = new();
+        public FoodConfig Food { get; set; } = new();
+        public LoggingConfig Logging { get; set; } = new();
 
         public GameConfig() { }
 
-        public static GameConfig LoadFromFile(string filePath)
+        public static GameConfig LoadFromFile(string filePath, ILogger? logger)
         {
-            string jsonString = File.ReadAllText(filePath);
-            var options = new JsonSerializerOptions
+            try
             {
-                PropertyNameCaseInsensitive = true
-            };
-            var config = JsonSerializer.Deserialize<GameConfig>(jsonString, options);
-            if (config == null)
-            {
-                throw new InvalidOperationException("Failed to load configuration from file.");
+                string jsonString = File.ReadAllText(filePath);
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                var config = JsonSerializer.Deserialize<GameConfig>(jsonString, options);
+                if (config == null)
+                {
+                    throw new InvalidOperationException("Failed to load configuration from file.");
+                }
+                logger?.Info("Konfigurácia úspešne načítaná.");
+                return config;
             }
-            return config;
+            catch (Exception ex)
+            {
+                logger?.Error($"Chyba pri načítaní konfigurácie: {ex.Message}");
+                throw;
+            }
         }
     }
 
@@ -33,7 +45,7 @@ namespace Snake.Game
     {
         public int Width { get; set; }
         public int Height { get; set; }
-        public string BorderCharacter { get; set; }
+        public string BorderCharacter { get; set; } = "■";
 
         public GameBoardConfig() { }
 
@@ -57,8 +69,8 @@ namespace Snake.Game
     public class SnakeConfig
     {
         public int InitialScore { get; set; }
-        public string Color { get; set; }
-        public string RenderCharacter { get; set; }
+        public string Color { get; set; } = "Red";
+        public string RenderCharacter { get; set; } = "■";
 
         public SnakeConfig() { }
 
@@ -76,8 +88,8 @@ namespace Snake.Game
 
     public class FoodConfig
     {
-        public string Color { get; set; }
-        public string RenderCharacter { get; set; }
+        public string Color { get; set; } = "Cyan";
+        public string RenderCharacter { get; set; } = "■";
 
         public FoodConfig() { }
 
@@ -89,5 +101,10 @@ namespace Snake.Game
             Color = color;
             RenderCharacter = renderCharacter;
         }
+    }
+
+    public class LoggingConfig
+    {
+        public string Level { get; set; } = "Info";
     }
 } 

@@ -1,26 +1,41 @@
 using System;
 using Snake.Core;
+using Snake.Game.Core.Interfaces;
 
 namespace Snake.Game
 {
-    public class GameBoard
+    public class GameBoard : IGameBoard
     {
         public int Width { get; private set; }
         public int Height { get; private set; }
         private char BORDER_CHAR;
+        private readonly ILogger? _logger;
 
-        public GameBoard(int width, int height, char borderChar)
+        public GameBoard(int width, int height, char borderChar, ILogger? logger = null)
         {
             Width = width;
             Height = height;
             BORDER_CHAR = borderChar;
+            _logger = logger;
             InitializeConsole();
         }
 
         private void InitializeConsole()
         {
-            Console.WindowHeight = Height;
-            Console.WindowWidth = Width;
+            try
+            {
+                int maxWidth = Console.LargestWindowWidth;
+                int maxHeight = Console.LargestWindowHeight;
+                int setWidth = Math.Min(Width, maxWidth);
+                int setHeight = Math.Min(Height, maxHeight);
+                _logger?.Info($"Nastavujem velkost okna: pozadovane {Width}x{Height}, nastavene {setWidth}x{setHeight}, max {maxWidth}x{maxHeight}");
+                Console.SetWindowSize(setWidth, setHeight);
+                Console.SetBufferSize(setWidth, setHeight);
+            }
+            catch (Exception ex)
+            {
+                _logger?.Warning($"Nepodarilo sa nastaviť veľkosť terminálu: {ex.Message}");
+            }
         }
 
         public void DrawBorders()

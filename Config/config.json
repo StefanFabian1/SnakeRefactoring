@@ -15,5 +15,8 @@
     "Food": {
         "Color": "Cyan",
         "RenderCharacter": "■"
+    },
+    "Logging": {
+        "Level": "Info"
     }
 } 
